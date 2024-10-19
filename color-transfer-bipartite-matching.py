@@ -8,7 +8,7 @@ from scipy.sparse.csgraph import maximum_bipartite_matching
 
 def load_image(file_path):
     """Load an image and convert it to a numpy array."""
-    return np.array(Image.open(file_path))
+    return np.array(Image.open(file_path).convert('RGB'))
 
 def rgb_to_lab(rgb_image):
     """Convert RGB image to LAB color space using skimage."""
@@ -31,6 +31,10 @@ def get_unique_colors(image_rgb, image_lab):
 
 def create_sparse_cost_matrix(colors1, colors2, k):
     """Create a sparse cost matrix based on K-nearest neighbors."""
+
+    ## k is limited to the number of unique donor colors (colors2)
+    k = min( k, len(colors2) )
+
     tree = cKDTree(colors2)
     distances, indices = tree.query(colors1, k=k)
     
